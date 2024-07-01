@@ -33,11 +33,20 @@ void hash_to_file(ht *htable, char *output, int file_number) {
   hti *it = &iterator;
   file = fopen(output, "w");
   while(ht_next(it)) {
+    if(strcmp(it->key,"KNKNENK") == 0) {
+      fprintf(stdout, "\n\tWRITING %s ", it->key);
+    }
     fprintf(file, "%s,", it->key);
     int i = 0;
     while(i < file_number - 1) {
+      if(strcmp(it->key,"KNKNENK") == 0) {
+	fprintf(stdout, "%d ", it->counts[i]);
+      }
       fprintf(file, "%d,", it->counts[i]);
       i++;
+    }
+    if(strcmp(it->key,"KNKNENK") == 0) {
+      fprintf(stdout, "\n\n");
     }
     fprintf(file, "\n");
   }
@@ -83,6 +92,9 @@ int main(int argc, char **argv)
 	countI = (int)strtol(countC, (char **)NULL, 10);
 	int *temp_count = &countI;
 	/* ------------------------------ */
+	if(strcmp(key,"KNKNENK") == 0) {
+	  fprintf(stdout, "\n\tFOUND %s in %s in %d counts\n\n", key, argv[f], countI);
+	}
 	if (ht_set(htable, key, temp_count, f) == NULL) {
 	  exit_nomem();
 	}
