@@ -53,7 +53,7 @@ The `ht_expand()` function was using the `ht_set_entry()` function with default 
 
 
 ## TODO
- - See if the code can be better organised for the different usage cases of the `ht_set_entry()` function.
- - Add *ALL* the securities for the code, which is quite bare so far
- - Setup a makefile for the project
- - Build a couple of tests to make sure the script is functional when built from source.
+ - [ ] See if the code can be better organised for the different usage cases of the `ht_set_entry()` function.
+ - [ ] Add *ALL* the securities for the code, which is quite bare so far
+ - [X] Setup a makefile for the project
+ - [ ] Build a couple of tests to make sure the script is functional when built from source.
