@@ -4,17 +4,17 @@
 #include <math.h>
 #include "ht_array_DYNAMIC.h"
 
-/* This script expects as input a space-separated file with */
-/*  in the first column a key used to identify an entry and */
-/*  in the second column an integer value. */
+// This script expects as input a space-separated file with
+ // in the first column a key used to identify an entry and
+ // in the second column an integer value.
 
-/* The files listed as input are read and the keys are used to */
-/* populate a hash table. The hash table has any key associated */
-/* with a vector of all the integer values corresponding to that */
-/* key. */
+// The files listed as input are read and the keys are used to
+// populate a hash table. The hash table has any key associated
+// with a vector of all the integer values corresponding to that
+// key.
 
-/* The script resolves the problem of presence / absence of keys */
-/* between different files by including 0 values in the vectors. */
+// The script resolves the problem of presence / absence of keys
+// between different files by including 0 values in the vectors.
 
 #define KEY_SIZE 7
 
@@ -25,8 +25,8 @@ void exit_nomem(void) {
   fprintf(stderr, "out of memory\n");
   exit(1);
 }
-/* ------------------------------------------------- */
-/* ------------------------------------------------- */
+// -------------------------------------------------
+// -------------------------------------------------
 void hash_to_file(ht *htable, char *output, int file_number) {
   FILE *file;
   hti iterator = ht_iterator(htable);
