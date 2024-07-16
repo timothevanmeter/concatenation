@@ -50,6 +50,22 @@ To find the error I look at the variant "KNKNENK". Thus, the debugging code is t
 The `ht_expand()` function was using the `ht_set_entry()` function with default arguments causing it to only write the last count value to the array and filling the rest with zeros. An additional argument to the `ht_set_entry()` function, `int copy` taking the value 0 or 1, tracks if the array of the `struct ht_entry` should copied entirely completed with another count value or initialised.
 
 
+## New BUG!
+
+There is 506 times (out of 13939 lines) where the count written to the output for the second input file is incorrect: the output count is 30984 as the sequence is absent in the input file.
+```
+EKIIKEK,29,30984,
+IKNIRTT,15,30984,
+RTNNAER,8,30984,
+NKHDNIK,65,30984,
+NRHDNIM,7,30984,
+DIEKKRV,68,30984,
+```
+Verifying for all the above with a grep on the input files shows that the count for the first input file are always correct, as the second are always zero - or absent.
+```
+grep EKIIKEK input_file_1.counts
+```
+
 
 
 ## TODO

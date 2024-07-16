@@ -16,7 +16,7 @@
 // The script resolves the problem of presence / absence of keys
 // between different files by including 0 values in the vectors.
 
-#define KEY_SIZE 7
+#define KEY_SIZE 30
 
 // -----------------------------------------------------------
 // -----------------------------------------------------------
