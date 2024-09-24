@@ -4,9 +4,10 @@
 #include <math.h>
 #include "ht_array_DYNAMIC.h"
 
+// ##############################################################
 // This script expects as input a space-separated file with
- // in the first column a key used to identify an entry and
- // in the second column an integer value.
+// in the first column a key used to identify an entry and
+// in the second column an integer value.
 
 // The files listed as input are read and the keys are used to
 // populate a hash table. The hash table has any key associated
@@ -16,6 +17,12 @@
 // The script resolves the problem of presence / absence of keys
 // between different files by including 0 values in the vectors.
 
+// -----------------
+// USAGE:
+
+// -----------------
+
+// ##############################################################
 #define KEY_SIZE 30
 
 // -----------------------------------------------------------
