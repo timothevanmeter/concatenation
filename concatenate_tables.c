@@ -52,6 +52,22 @@ void exit_nomem(void) {
 }
 // -------------------------------------------------
 // -------------------------------------------------
+void print_hash(ht *htable, int file_number) {
+  hti iterator = ht_iterator(htable);
+  hti *it = &iterator;
+  while(ht_next(it)) {
+    fprintf(stdout, "%s,", it->key);
+    int i = 0;
+    while(i < file_number - 1) {
+      fprintf(stdout, "%d,", it->counts[i]);
+      i++;
+    }
+    fprintf(stdout, "\n");
+  }
+}
+
+// -------------------------------------------------
+// -------------------------------------------------
 void hash_to_file(ht *htable, char *output, int file_number) {
   FILE *file;
   hti iterator = ht_iterator(htable);
@@ -105,6 +121,9 @@ int main(int argc, char **argv)
   // LOOPING OVER ALL THE INPUT FILES CONTAINING THE COUNTS
   for(int f = 1; f < FILE_NUMBER; f++) {
     fp = fopen(argv[f], "r");
+    fprintf( stdout, "---------------------------\n");
+    print_hash(htable, FILE_NUMBER);
+    fprintf( stdout, "---------------------------\n");
     fprintf(stdout, "\n\tProcessing file %s\n", argv[f]);
     fflush(stdout);
     
@@ -163,7 +182,9 @@ int main(int argc, char **argv)
     fprintf(stdout,"\t%d items processed\n", n);
     n = 0;
   }
-  
+
+  fprintf( stdout, "---------------------------");
+  print_hash(htable, FILE_NUMBER);
   hash_to_file(htable, "out.dat", FILE_NUMBER);
   // CLEANING UP ALL THE MESS,
   //  CLOSING DOORS AND TURNING OFF THE LIGHTS!

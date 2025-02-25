@@ -66,6 +66,8 @@ Verifying for all the above with a grep on the input files shows that the count 
 grep EKIIKEK input_file_1.counts
 ```
 
+## *Another* New BUG!
+The function set_entry() is rewriting over old entry, it is missing a condition, i.e. the section responsible for creating new entries is *always* executed every time the function is called. Need to create conditions to choose between options: adding counts to an existing entry and creating a new entry.
 
 
 ## TODO

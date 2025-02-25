@@ -64,16 +64,18 @@ static uint64_t hash_key(char* key) {
   }
   return hash;
 }
+
 // ------------------------------------------------- 
 void print_counts(int * array, size_t size) {
   int i = 0;
-  while(i < size) {
+  while(i < size+1) {
     printf("%d,", array[i]);
     i++;
   }
   printf("\n");
 }
 // ------------------------------------------------- 
+
 void add_count(int** counts, int new_count, int file_number) {
   int *temp = malloc(file_number * sizeof(int));
   if (temp == NULL) {
@@ -86,6 +88,7 @@ void add_count(int** counts, int new_count, int file_number) {
   free(*counts);
   *counts = temp;
 }
+
 // ------------------------------------------------- 
 // ------------------------------------------------- 
 int ** create_array(int file_number, int *count) {
@@ -101,6 +104,7 @@ int ** create_array(int file_number, int *count) {
   array[file_number - 1] = *count;
   return a;
 }
+
 // ------------------------------------------------- 
 // ------------------------------------------------- 
 int ** copy_array(int file_number, int **count, char *key) {
@@ -120,6 +124,7 @@ int ** copy_array(int file_number, int **count, char *key) {
   }
   return a;
 }
+
 // ------------------------------------------------- 
 // ------------------------------------------------- 
 // Internal function to set an entry (without expanding table). 
@@ -294,9 +299,9 @@ bool ht_next(hti* it) {
   }
   return false;
 }
-// ------------------------------------------------- 
-// ------------------------------------------------- 
 
+// ------------------------------------------------- 
+// ------------------------------------------------- 
 void add(int ** array, int new) {
   int * temp = (*array);
   while((*temp) != 0) {
@@ -307,7 +312,6 @@ void add(int ** array, int new) {
 }
 
 // ###########################################################################
-
 // int main(int argc, char **argv) 
 // { 
 //   int * array = calloc(10, sizeof(long int)); 
