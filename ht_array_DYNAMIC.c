@@ -111,11 +111,11 @@ int ** copy_array(int file_number, int **count, char *key) {
     exit(1);
   }
   for (int i = 0; i < file_number - 1; i++) {
-    if(strcmp(key,"KNKNENK") == 0) {
-      fprintf(stdout, "\n\tCOPYING:\n");
-      fprintf(stdout, "\t%d\n", (*count)[i]);
-      fflush(stdout);
-    }
+    // if(strcmp(key,"KNENENK") == 0) {
+    //   fprintf(stdout, "\n\tCOPYING:\n");
+    //   fprintf(stdout, "\t%d\n", (*count)[i]);
+    //   fflush(stdout);
+    // }
     array[i] = (*count)[i];
   }
   return a;
@@ -132,26 +132,26 @@ char* ht_set_entry(ht_entry* entries, size_t capacity,
   // ----------------------------------------------
   if(copy == 1) {
     entries[index].key = (char*)key;
-    entries[index].size = file_number;
-    if(strcmp(entries[index].key,"KNKNENK") == 0) {
-      fprintf(stdout, "\tREADING from OLD hash table: [%d] ", file_number);
-      for(int i=0; i < file_number; i++) {
-	fprintf(stdout, " %d", count[i]);
-      }
-      fprintf(stdout, "\n");
-      fflush(stdout);
-    }
+    entries[index].size = file_number-1;
+    // if(strcmp(entries[index].key,"KNENENK") == 0) {
+    //   fprintf(stdout, "\tREADING from OLD hash table: [%d] ", file_number-1);
+    //   for(int i=0; i < file_number-1; i++) {
+    // 	fprintf(stdout, " %d", count[i]);
+    //   }
+    //   fprintf(stdout, "\n");
+    //   fflush(stdout);
+    // }
     // int **temp = copy_array(file_number, &count, key);
     // entries[index].counts = (*temp);
     entries[index].counts = count;
-    if(strcmp(entries[index].key,"KNKNENK") == 0) {
-      fprintf(stdout, "\tREADING from NEW hash table: [%ld] ", entries[index].size);
-      for(int i=0; i < entries[index].size; i++) {
-	fprintf(stdout, " %d", entries[index].counts[i]);
-      }
-      fprintf(stdout, "\n");
-      fflush(stdout);
-    }
+    // if(strcmp(entries[index].key,"KNENENK") == 0) {
+    //   fprintf(stdout, "\tREADING from NEW hash table: [%ld] ", entries[index].size);
+    //   for(int i=0; i < entries[index].size; i++) {
+    // 	fprintf(stdout, " %d", entries[index].counts[i]);
+    //   }
+    //   fprintf(stdout, "\n");
+    //   fflush(stdout);
+    // }
     return key;
   }
   // ----------------------------------------------
@@ -162,14 +162,14 @@ char* ht_set_entry(ht_entry* entries, size_t capacity,
   while (entries[index].key != NULL) {
     if (strcmp(key, entries[index].key) == 0) {
       // Found key (it already exists), update value.
-      if(strcmp(entries[index].key,"KNKNENK") == 0) {
-	fprintf(stdout, "\n\tADDING to hash table %s ", entries[index].key);
-	fflush(stdout);
-      }
+      // if(strcmp(entries[index].key,"KNENENK") == 0) {
+      // 	fprintf(stdout, "\n\tADDING to hash table %s ", entries[index].key);
+      // 	fflush(stdout);
+      // }
       // fprintf(stdout, "%d :", (*count)); 
       // fflush(stdout); 
-      add_count(&entries[index].counts, *count, file_number);
-      entries[index].size = file_number;
+      add_count(&entries[index].counts, *count, file_number-1);
+      entries[index].size = file_number-1;
       return entries[index].key;
     }
     // Key wasn't in this slot, move to next (linear probing).
@@ -189,22 +189,22 @@ char* ht_set_entry(ht_entry* entries, size_t capacity,
   }
   entries[index].key = (char*)key;
   if(file_number != 1) {
-    int **temp = create_array(file_number, count);
+    int **temp = create_array(file_number-1, count);
     entries[index].counts = (*temp);
-    entries[index].size = file_number;
+    entries[index].size = file_number-1;
   } else {
     entries[index].counts = malloc(1 * sizeof(int));
     entries[index].counts[0] = *count;
     entries[index].size = 1;
   }
-  if(strcmp(entries[index].key,"KNKNENK") == 0) {
-    fprintf(stdout, "\tPUSHING to hash table %s ", entries[index].key);
-    for(int i=0; i < entries[index].size; i++) {
-      fprintf(stdout, " %d", entries[index].counts[i]);
-    }
-    fprintf(stdout, "\n");
-    fflush(stdout);
-  }
+  // if(strcmp(entries[index].key,"KNENENK") == 0) {
+  //   fprintf(stdout, "\tPUSHING to hash table %s ", entries[index].key);
+  //   for(int i=0; i < entries[index].size; i++) {
+  //     fprintf(stdout, " %d", entries[index].counts[i]);
+  //   }
+  //   fprintf(stdout, "\n");
+  //   fflush(stdout);
+  // }
   return key;
 }
 
@@ -226,15 +226,15 @@ static bool ht_expand(ht* table) {
   for (size_t i = 0; i < table->capacity; i++) {
     ht_entry entry = table->entries[i];
     if (entry.key != NULL) {
-      if(strcmp(entry.key,"KNKNENK") == 0) {
-	fprintf(stdout, "\tSTATE of entry:");
-	for(int i=0; i < entry.size; i++) {
-	  fprintf(stdout, " %d", entry.counts[i]);
-	}
-	fprintf(stdout, " [%ld]", entry.size);
-	fprintf(stdout, "\n");
-	fflush(stdout);
-      }
+      // if(strcmp(entry.key,"KNENENK") == 0) {
+      // 	fprintf(stdout, "\tSTATE of entry:");
+      // 	for(int i=0; i < entry.size; i++) {
+      // 	  fprintf(stdout, " %d", entry.counts[i]);
+      // 	}
+      // 	fprintf(stdout, " [%ld]", entry.size);
+      // 	fprintf(stdout, "\n");
+      // 	fflush(stdout);
+      // }
       ht_set_entry(new_entries, new_capacity, entry.key,
 		   entry.counts, NULL, entry.size, 1);
     }
