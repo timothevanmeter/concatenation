@@ -8,6 +8,8 @@
 
 #define INITIAL_CAPACITY 16
 
+extern int TOTAL_FILE_NUMBER;
+
 typedef struct {
   char* key;  // key is NULL if this slot is empty
   int* counts;
@@ -17,7 +19,7 @@ typedef struct {
 // Hash table structure: create with ht_create, free with ht_destroy.
 struct ht {
   ht_entry* entries;  // hash slots
-  size_t capacity;    // size of _entries array
+  size_t capacity;    // size of entries array
   size_t length;      // number of items in hash table
 };
 
@@ -77,49 +79,45 @@ void print_counts(int * array, size_t size) {
 // ------------------------------------------------- 
 
 void add_count(int** counts, int new_count, int file_number) {
-  int *temp = malloc(file_number * sizeof(int));
-  if (temp == NULL) {
-    return;
-  }
-  for(int i = 0; i < file_number - 1; i++) {
-    temp[i] = (*counts)[i];
-  }
-  temp[file_number - 1] = new_count;
-  free(*counts);
-  *counts = temp;
+  // int *temp = malloc(file_number * sizeof(int));
+  // if (temp == NULL) {
+  //   return;
+  // }
+  // for(int i = 0; i < file_number - 1; i++) {
+  //   temp[i] = (*counts)[i];    
+  // }
+  (*counts)[file_number] = new_count;
+  // temp[file_number - 1] = new_count;
+  // free(*counts);
+  // *counts = temp;
 }
 
 // ------------------------------------------------- 
 // ------------------------------------------------- 
 int ** create_array(int file_number, int *count) {
-  int *array = malloc(file_number * sizeof(int));
+  int *array = malloc(TOTAL_FILE_NUMBER * sizeof(int));
   int **a = &array;
   if (array == NULL) {
     fprintf(stderr, "Memory allocation failed\n");
     exit(1);
   }
-  for (int i = 0; i < file_number - 1; i++) {
+  for (int i = 0; i < TOTAL_FILE_NUMBER; i++) {
     array[i] = 0;
   }
-  array[file_number - 1] = *count;
+  array[file_number] = *count;
   return a;
 }
 
 // ------------------------------------------------- 
 // ------------------------------------------------- 
 int ** copy_array(int file_number, int **count, char *key) {
-  int *array = malloc(file_number * sizeof(int));
+  int *array = malloc(TOTAL_FILE_NUMBER * sizeof(int));
   int **a = &array;
   if (array == NULL) {
     fprintf(stderr, "Memory allocation failed\n");
     exit(1);
   }
-  for (int i = 0; i < file_number - 1; i++) {
-    // if(strcmp(key,"KNENENK") == 0) {
-    //   fprintf(stdout, "\n\tCOPYING:\n");
-    //   fprintf(stdout, "\t%d\n", (*count)[i]);
-    //   fflush(stdout);
-    // }
+  for (int i = 0; i < TOTAL_FILE_NUMBER - 1; i++) {
     array[i] = (*count)[i];
   }
   return a;
@@ -138,43 +136,17 @@ char* ht_set_entry(ht_entry* entries, size_t capacity,
   if(copy == 1) {
     entries[index].key = (char*)key;
     entries[index].size = file_number-1;
-    // if(strcmp(entries[index].key,"KNENENK") == 0) {
-    //   fprintf(stdout, "\tREADING from OLD hash table: [%d] ", file_number-1);
-    //   for(int i=0; i < file_number-1; i++) {
-    // 	fprintf(stdout, " %d", count[i]);
-    //   }
-    //   fprintf(stdout, "\n");
-    //   fflush(stdout);
-    // }
-    // int **temp = copy_array(file_number, &count, key);
-    // entries[index].counts = (*temp);
     entries[index].counts = count;
-    // if(strcmp(entries[index].key,"KNENENK") == 0) {
-    //   fprintf(stdout, "\tREADING from NEW hash table: [%ld] ", entries[index].size);
-    //   for(int i=0; i < entries[index].size; i++) {
-    // 	fprintf(stdout, " %d", entries[index].counts[i]);
-    //   }
-    //   fprintf(stdout, "\n");
-    //   fflush(stdout);
-    // }
     return key;
   }
   // ----------------------------------------------
-  // AND hash with capacity-1 to ensure it's within entries array.
-  // uint64_t hash = hash_key(key);
-  // size_t index = (size_t)(hash & (uint64_t)(capacity - 1));
   // Loop till we find an empty entry.
   while (entries[index].key != NULL) {
     if (strcmp(key, entries[index].key) == 0) {
       // Found key (it already exists), update value.
-      // if(strcmp(entries[index].key,"KNENENK") == 0) {
-      // 	fprintf(stdout, "\n\tADDING to hash table %s ", entries[index].key);
-      // 	fflush(stdout);
-      // }
-      // fprintf(stdout, "%d :", (*count)); 
-      // fflush(stdout); 
       add_count(&entries[index].counts, *count, file_number-1);
-      entries[index].size = file_number-1;
+      // entries[index].size = file_number-1;
+      entries[index].size = TOTAL_FILE_NUMBER;
       return entries[index].key;
     }
     // Key wasn't in this slot, move to next (linear probing).
@@ -193,22 +165,15 @@ char* ht_set_entry(ht_entry* entries, size_t capacity,
     (*plength)++;
   }
   entries[index].key = (char*)key;
-  if(file_number != 1) {
-    int **temp = create_array(file_number-1, count);
-    entries[index].counts = (*temp);
-    entries[index].size = file_number-1;
-  } else {
-    entries[index].counts = malloc(1 * sizeof(int));
-    entries[index].counts[0] = *count;
-    entries[index].size = 1;
-  }
-  // if(strcmp(entries[index].key,"KNENENK") == 0) {
-  //   fprintf(stdout, "\tPUSHING to hash table %s ", entries[index].key);
-  //   for(int i=0; i < entries[index].size; i++) {
-  //     fprintf(stdout, " %d", entries[index].counts[i]);
-  //   }
-  //   fprintf(stdout, "\n");
-  //   fflush(stdout);
+  // if(file_number != 1) {
+  int **temp = create_array(file_number-1, count);
+  entries[index].counts = (*temp);
+  // entries[index].size = file_number-1;
+  entries[index].size = TOTAL_FILE_NUMBER;
+  // } else {
+  //   entries[index].counts = malloc(1 * sizeof(int));
+  //   entries[index].counts[0] = *count;
+  //   entries[index].size = 1;
   // }
   return key;
 }

@@ -69,6 +69,17 @@ grep EKIIKEK input_file_1.counts
 ## *Another* New BUG!
 The function set_entry() is rewriting over old entry, it is missing a condition, i.e. the section responsible for creating new entries is *always* executed every time the function is called. Need to create conditions to choose between options: adding counts to an existing entry and creating a new entry.
 
+## Reorganisation of the ht_set_entry() function
+There is probably no need to dynamically allocate the memory for the arrays in each entry as the size is known in advance and equal to the number of file read and thus reducing the number of cases to keep track of in the function.
+For example if the whole array is allocated for every new entry, then the case file_number == 1 is not relevant anymore.
+
+## Solved *most* of the BUGS !
+Adding a global variable TOTAL_FILE_NUMBER to the main file with a reference as an external variable in ht_array_DYNAMIC.c removes all the additional code caused by using file_number.
+Now the array are directly initialised with their final size, TOTAL_FILE_NUMBER, and the array can be populated without re-allocating memory during this process
+
+## Remaining BUG ...
+When printing to file the script prints an additional column populated only with zeros.
+
 
 ## TODO
  - [ ] See if the code can be better organised for the different usage cases of the `ht_set_entry()` function.

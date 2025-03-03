@@ -43,6 +43,8 @@
 // ##############################################################
 #define KEY_SIZE 40
 
+int TOTAL_FILE_NUMBER = 0;
+
 // -----------------------------------------------------------
 // -----------------------------------------------------------
 
@@ -52,13 +54,13 @@ void exit_nomem(void) {
 }
 // -------------------------------------------------
 // -------------------------------------------------
-void print_hash(ht *htable, int file_number) {
+void print_hash(ht *htable) {
   hti iterator = ht_iterator(htable);
   hti *it = &iterator;
   while(ht_next(it)) {
     fprintf(stdout, "%s,", it->key);
     int i = 0;
-    while(i < file_number - 1) {
+    while(i < TOTAL_FILE_NUMBER) {
       fprintf(stdout, "%d,", it->counts[i]);
       i++;
     }
@@ -68,27 +70,18 @@ void print_hash(ht *htable, int file_number) {
 
 // -------------------------------------------------
 // -------------------------------------------------
-void hash_to_file(ht *htable, char *output, int file_number) {
+void hash_to_file(ht *htable, char *output) {
   FILE *file;
   hti iterator = ht_iterator(htable);
   hti *it = &iterator;
   file = fopen(output, "w");
   while(ht_next(it)) {
-    // if(strcmp(it->key,"KNENENK") == 0) {
-    //   fprintf(stdout, "\n\tWRITING %s ", it->key);
-    // }
     fprintf(file, "%s,", it->key);
     int i = 0;
-    while(i < file_number - 2) {
-      // if(strcmp(it->key,"KNENENK") == 0) {
-      // 	fprintf(stdout, "%d ", it->counts[i]);
-      // }
+    while(i < TOTAL_FILE_NUMBER) {
       fprintf(file, "%d,", it->counts[i]);
       i++;
     }
-    // if(strcmp(it->key,"KNENENK") == 0) {
-    //   fprintf(stdout, "\n\n");
-    // }
     fprintf(file, "\n");
   }
   fclose(file);
@@ -109,9 +102,10 @@ int main(int argc, char **argv)
   int END = 0;
   int n = 0;
 
-  int FILE_NUMBER = argc;
-  printf("\nFILE NUMBER = %d\n", FILE_NUMBER - 1);
-  
+  fprintf( stdout, "---------------------------\n");
+  TOTAL_FILE_NUMBER = argc;
+  printf("FILE NUMBER = %d\n", TOTAL_FILE_NUMBER - 1);
+  fprintf( stdout, "---------------------------\n");
   // size_t hash_table_size = 0;
   ht * htable = ht_create();
   if (htable == NULL) {
@@ -119,11 +113,11 @@ int main(int argc, char **argv)
   }
 
   // LOOPING OVER ALL THE INPUT FILES CONTAINING THE COUNTS
-  for(int f = 1; f < FILE_NUMBER; f++) {
+  for(int f = 1; f < TOTAL_FILE_NUMBER; f++) {
     fp = fopen(argv[f], "r");
-    fprintf( stdout, "---------------------------\n");
-    print_hash(htable, FILE_NUMBER);
-    fprintf( stdout, "---------------------------\n");
+    // fprintf( stdout, "---------------------------\n");
+    // print_hash(htable);
+    // fprintf( stdout, "---------------------------\n");
     fprintf(stdout, "\n\tProcessing file %s\n", argv[f]);
     fflush(stdout);
     
@@ -136,14 +130,12 @@ int main(int argc, char **argv)
       if(ch == '\n' || ch == '\r' || END == 1) {
 	// TERMINATE THE STRING TO AVOID UNDEFINED BEHAVIOUR
 	countC[p++] = '\0';
-	fprintf( stdout, " ===> %d\n", (int)strtol(countC, (char **)NULL, 10) );
-	fflush(stdout);
+	// fprintf( stdout, " ===> %d", (int)strtol(countC, (char **)NULL, 10) );
 	countI = (int)strtol(countC, (char **)NULL, 10);
 	int *temp_count = &countI;
+	// fprintf( stdout, " %d\n", *temp_count );
+	fflush(stdout);
 	// ------------------------------
-	// if(strcmp(key,"KNENENK") == 0) {
-	//   fprintf(stdout, "\n\tFOUND %s in %s in %d counts\n\n", key, argv[f], countI);
-	// }
 	if (ht_set(htable, key, temp_count, f) == NULL) {
 	  exit_nomem();
 	}
@@ -183,9 +175,9 @@ int main(int argc, char **argv)
     n = 0;
   }
 
-  fprintf( stdout, "---------------------------");
-  print_hash(htable, FILE_NUMBER);
-  hash_to_file(htable, "out.dat", FILE_NUMBER);
+  fprintf( stdout, "---------------------------\n");
+  // print_hash(htable);
+  hash_to_file(htable, "out.dat");
   // CLEANING UP ALL THE MESS,
   //  CLOSING DOORS AND TURNING OFF THE LIGHTS!
   ht_destroy(htable);
