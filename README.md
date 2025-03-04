@@ -79,7 +79,8 @@ Now the array are directly initialised with their final size, TOTAL_FILE_NUMBER,
 
 ## Remaining BUG ...
 When printing to file the script prints an additional column populated only with zeros.
-**SOLVED !** 
+
+**SOLVED !**
 
 
 ## TODO
