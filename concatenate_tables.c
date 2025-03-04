@@ -19,11 +19,15 @@
 
 // -----------------
 // USAGE:
+
+// How to call the executable:
+// $ ./conc.o <file_1_to_concatenate> <file_2_to_concatenate> <file_N_to_concatenate> <output_name>
+
 // The makefile has 5 different options
  // By default if make is launch without any options it will do make all (option 5)
 
 // 1) COMPILATION and production of an executable:
-// $ make conc
+// $ make compile
 
 // 2) RUNNING the executable:
 //     By default this is done on the files T4_retina_100.counts and T6_retina_100.counts located in the data_test folder
@@ -93,6 +97,7 @@ void hash_to_file(ht *htable, char *output) {
 int main(int argc, char **argv)
 {
   FILE * fp;
+  char * output = strcat(argc[argv-1], ".csv");
   char ch;
   char * key = malloc(sizeof(char) * KEY_SIZE);
   char * countC = malloc(sizeof(char) * KEY_SIZE);
@@ -102,9 +107,16 @@ int main(int argc, char **argv)
   int END = 0;
   int n = 0;
 
+  // NEED TO:
+  // TESTING IF THE INPUT FILE IS CORRECTLY FORMATTED !
+
+  // NEED TO:
+  // TESTING IF AN OUTPUT NAME WAS PROVIDED !
+  
+
   fprintf( stdout, "---------------------------\n");
-  TOTAL_FILE_NUMBER = argc;
-  printf("FILE NUMBER = %d\n", TOTAL_FILE_NUMBER - 1);
+  TOTAL_FILE_NUMBER = argc - 2;
+  printf("FILE NUMBER = %d\n", TOTAL_FILE_NUMBER);
   fprintf( stdout, "---------------------------\n");
   // size_t hash_table_size = 0;
   ht * htable = ht_create();
@@ -113,15 +125,10 @@ int main(int argc, char **argv)
   }
 
   // LOOPING OVER ALL THE INPUT FILES CONTAINING THE COUNTS
-  for(int f = 1; f < TOTAL_FILE_NUMBER; f++) {
+  for(int f = 1; f < TOTAL_FILE_NUMBER + 1; f++) {
     fp = fopen(argv[f], "r");
-    // fprintf( stdout, "---------------------------\n");
-    // print_hash(htable);
-    // fprintf( stdout, "---------------------------\n");
     fprintf(stdout, "\n\tProcessing file %s\n", argv[f]);
     fflush(stdout);
-    
-    // while( !feof(fp) ) {
     while( 1 ) {
       // Parsing the data file character by character
       ch = fgetc(fp);
@@ -130,10 +137,8 @@ int main(int argc, char **argv)
       if(ch == '\n' || ch == '\r' || END == 1) {
 	// TERMINATE THE STRING TO AVOID UNDEFINED BEHAVIOUR
 	countC[p++] = '\0';
-	// fprintf( stdout, " ===> %d", (int)strtol(countC, (char **)NULL, 10) );
 	countI = (int)strtol(countC, (char **)NULL, 10);
 	int *temp_count = &countI;
-	// fprintf( stdout, " %d\n", *temp_count );
 	fflush(stdout);
 	// ------------------------------
 	if (ht_set(htable, key, temp_count, f) == NULL) {
@@ -154,8 +159,6 @@ int main(int argc, char **argv)
       if(ch == ' ') {
 	// TERMINATE THE STRING TO AVOID UNDEFINED BEHAVIOUR
 	key[p++] = '\0';
-	// fprintf( stdout, "%s", key );
-	// fflush(stdout);
 	p = 0;
 	READ++;
       }
@@ -171,13 +174,14 @@ int main(int argc, char **argv)
       }
     }
     fclose(fp);
-    fprintf(stdout,"\t%d items processed\n", n);
+    fprintf(stdout,"\t%d items processed\n\n", n);
     n = 0;
   }
 
   fprintf( stdout, "---------------------------\n");
   // print_hash(htable);
-  hash_to_file(htable, "out.dat");
+
+  hash_to_file(htable, output);
   // CLEANING UP ALL THE MESS,
   //  CLOSING DOORS AND TURNING OFF THE LIGHTS!
   ht_destroy(htable);
