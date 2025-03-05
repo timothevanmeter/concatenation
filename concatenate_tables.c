@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <math.h>
 #include "ht_array_DYNAMIC.h"
 
@@ -24,7 +25,7 @@
 // $ ./conc.o <file_1_to_concatenate> <file_2_to_concatenate> <file_N_to_concatenate> <output_name>
 
 // The makefile has 5 different options
- // By default if make is launch without any options it will do make all (option 5)
+// By default if make is launch without any options it will do make all (option 5)
 
 // 1) COMPILATION and production of an executable:
 // $ make compile
@@ -46,7 +47,6 @@
 
 // ##############################################################
 #define KEY_SIZE 40
-
 int TOTAL_FILE_NUMBER = 0;
 
 // -----------------------------------------------------------
@@ -98,14 +98,54 @@ void hash_to_file(ht *htable, char *output, char **argv) {
   }
   fclose(file);
 }
+
 // -------------------------------------------------
+void test_input_format(int argc, char **argv) {
+  fprintf( stdout, "---------------------------\n");
+  char ch;
+  int i = 0;
+  int READ = 1;
+  FILE *fp;
+  for(int f = 1; f < argc-1; f++) {
+    fp = fopen(argv[f], "r");
+    fprintf(stdout, "Verifying format of file: %s\n", argv[f]);
+    fflush(stdout);
+    ch = fgetc(fp);
+    READ = 1;
+    i = 0;
+    while(ch != '\n' && ch != '\r') {
+      if(ch == ' ') {
+	READ++;
+	ch = fgetc(fp);
+	continue;
+      }
+      if(READ == 1) {
+	if(i > KEY_SIZE) {
+	  fprintf(stderr, "\nERROR: first field's identifier exceeds KEY_SIZE's length=%d\nEdit the length of KEY_SIZE in concatenate_tables.c:48 to allow for longer keys.", KEY_SIZE);
+	  exit(EXIT_FAILURE);
+	}
+      } else {
+	if(!isdigit(ch)) {
+	  fprintf(stderr, "\nERROR: second field's count has non-digit characters: %c\n", ch);
+	  exit(EXIT_FAILURE);
+	}
+      }
+      ch = fgetc(fp);
+      i++;
+    }
+    if(READ == 1) {
+      fprintf(stderr, "\nERROR: the fields are not space separated\n");
+      exit(EXIT_FAILURE);
+    }
+    fclose(fp);
+  }
+}
 
 // ###########################################################################
 
 int main(int argc, char **argv)
 {
   FILE * fp;
-  char * output = strcat(argv[argc-1], ".csv");
   char ch;
   char * key = malloc(sizeof(char) * KEY_SIZE);
   char * countC = malloc(sizeof(char) * KEY_SIZE);
@@ -114,20 +154,38 @@ int main(int argc, char **argv)
   int READ = 1;
   int END = 0;
   int n = 0;
-
-  printf("\n\t%s\n", argv[1]);
-
+  char * output;
+  
+  fprintf(stdout, "-----------------------------------------------------");
   // NEED TO:
   // TESTING IF THE INPUT FILE IS CORRECTLY FORMATTED !
 
-  // NEED TO:
-  // TESTING IF AN OUTPUT NAME WAS PROVIDED !
+  // TESTING that the size of the key is not larger
+  // than the allocated string size
+  // Testing that they are only two fields per line
+  // separated by whitespace
+  // test_input_format(argc, argv);
+
+  // TESTING THAT THE MINIMUM ARGUMENTS WERE PROVIDED
+  // FOR THE SCRIPT TO FUNCTION
+  if(argc < 3) {
+    fprintf(stderr, "\nERROR: Not enough arguments!\nNeed at least two files to concatenate\n");
+    exit(EXIT_FAILURE);
+  }
+  if(argc < 4) {
+    fprintf(stdout, "\nWARNING: No argument was provided for the output file's name\nBy default it will saved under concatenation_output.csv\n");
+    output = "concatenation_output.csv";
+    test_input_format(argc+1, argv);
+    TOTAL_FILE_NUMBER = argc - 1;
+  } else {
+    output = strcat(argv[argc-1], ".csv");
+    test_input_format(argc, argv);
+    TOTAL_FILE_NUMBER = argc - 2;
+  }
 
   fprintf( stdout, "---------------------------\n");
-  TOTAL_FILE_NUMBER = argc - 2;
   printf("FILE NUMBER = %d\n", TOTAL_FILE_NUMBER);
   fprintf( stdout, "---------------------------\n");
-  // size_t hash_table_size = 0;
   ht * htable = ht_create();
   if (htable == NULL) {
     exit_nomem();
@@ -173,6 +231,8 @@ int main(int argc, char **argv)
       }
       // READING THE 7MER OR ID COLUMN USED TO MERGE FILES
       if( READ == 1 ) {
+	// INTEGRATE a test to make sure to not write out of
+	// the bounds of the key string.
 	key[p] = ch;
 	p++;     
       }
@@ -186,10 +246,8 @@ int main(int argc, char **argv)
     fprintf(stdout,"\t%d items processed\n\n", n);
     n = 0;
   }
-
-  fprintf( stdout, "---------------------------\n");
+  fprintf(stdout, "---------------------------");
   // print_hash(htable);
-
   hash_to_file(htable, output, argv);
   // CLEANING UP ALL THE MESS,
   //  CLOSING DOORS AND TURNING OFF THE LIGHTS!

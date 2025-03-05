@@ -82,9 +82,11 @@ When printing to file the script prints an additional column populated only with
 
 **SOLVED !**
 
+## Automated unit testing
+
 
 ## TODO
  - [ ] See if the code can be better organised for the different usage cases of the `ht_set_entry()` function.
  - [ ] Add *ALL* the securities for the code, which is quite bare so far
  - [X] Setup a makefile for the project
- - [ ] Build a couple of tests to make sure the script is functional when built from source.}
+ - [ ] Build a couple of tests to make sure the script is functional when built from source.
