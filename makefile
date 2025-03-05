@@ -16,5 +16,5 @@ test:
 	./conc.o data_test/file* file-test-run
 
 clean:
-	$(RM) *.dat
+	$(RM) *.csv
 	$(RM) *.o

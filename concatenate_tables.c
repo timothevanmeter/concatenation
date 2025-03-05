@@ -74,11 +74,19 @@ void print_hash(ht *htable) {
 
 // -------------------------------------------------
 // -------------------------------------------------
-void hash_to_file(ht *htable, char *output) {
+void hash_to_file(ht *htable, char *output, char **argv) {
+  printf("\nSaving results to file: %s\n", output);
   FILE *file;
   hti iterator = ht_iterator(htable);
   hti *it = &iterator;
   file = fopen(output, "w");
+  // WRITING the header to the file
+  fprintf(file, "identifier,");
+  for(int i=1; i <= TOTAL_FILE_NUMBER; i++) {
+    fprintf(file, "%s,", argv[i]);
+  }
+  fprintf(file, "\n");
+  // WRITING the data to the file
   while(ht_next(it)) {
     fprintf(file, "%s,", it->key);
     int i = 0;
@@ -97,7 +105,7 @@ void hash_to_file(ht *htable, char *output) {
 int main(int argc, char **argv)
 {
   FILE * fp;
-  char * output = strcat(argc[argv-1], ".csv");
+  char * output = strcat(argv[argc-1], ".csv");
   char ch;
   char * key = malloc(sizeof(char) * KEY_SIZE);
   char * countC = malloc(sizeof(char) * KEY_SIZE);
@@ -107,12 +115,13 @@ int main(int argc, char **argv)
   int END = 0;
   int n = 0;
 
+  printf("\n\t%s\n", argv[1]);
+
   // NEED TO:
   // TESTING IF THE INPUT FILE IS CORRECTLY FORMATTED !
 
   // NEED TO:
   // TESTING IF AN OUTPUT NAME WAS PROVIDED !
-  
 
   fprintf( stdout, "---------------------------\n");
   TOTAL_FILE_NUMBER = argc - 2;
@@ -181,7 +190,7 @@ int main(int argc, char **argv)
   fprintf( stdout, "---------------------------\n");
   // print_hash(htable);
 
-  hash_to_file(htable, output);
+  hash_to_file(htable, output, argv);
   // CLEANING UP ALL THE MESS,
   //  CLOSING DOORS AND TURNING OFF THE LIGHTS!
   ht_destroy(htable);
